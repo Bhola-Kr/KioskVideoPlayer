@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#282828</color>
+    <color name="purple_500">#2F2E2E</color>
+    <color name="purple_700">#FF282828</color>
+    <color name="teal_200">#c42b4c</color>
+    <color name="teal_700">#BB2A49</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="colorPrimary">#d0d0d0</color>
+    <color name="colorPrimaryDark">#cccbcb</color>
+    <color name="colorAccent">#cd4a2c</color>
+    <color name="colorAppName_cd4a2c">#E30202</color>
+    <color name="viewBackground">#d0d0d0</color>
+    <color name="fb_blue">#2859a3</color>
+    <color name="sidebarFontColor">#74797e</color>
+    <color name="fontShadow">#51cd4a2c</color>
+    <color name="saladGreen">#2C9E3B</color>
+    <color name="darkblack">#181818</color>
+    <color name="swipeActivityBackground">#20292e</color>
+    <color name="drawerCircle">#D15830</color>
+    <color name="outerdrawerCircle">#eaa591</color>
+    <color name="brown_6d5f4d">#6d5f4d</color>
+    <color name="red_shopping_list_title">#c42b4c</color>
+    <color name="weekly_background_color">#02c7c6</color>
+    <color name="blue">#0212c7</color>
+    <color name="grey">#7F7F7F</color>
+
+    <color name="green_colour">#039309</color>
+    <color name="back_color">#BCC3D1</color>
+    <color name="theme_color">#FFF</color>
+    <color name="background_color">#323437</color>
+    <color name="transparent_color">#80000000</color>
+    <color name="matt_black">#141414</color>
+    <color name="color_cursor">#ffffff</color>
+    <color name="red_color">#ff0000</color>
+    <color name="green">#008000</color>
+    <color name="orange_color">#E65100</color>
+    <color name="dark_pink">#900C3F</color>
+    <color name="white_color">#FFF</color>
+    <color name="gray_color">#a7a8a8</color>
+    <color name="dark_gray_color">#545455</color>
+    <color name="card_color">#212121</color>
+    <color name="card_color_back">#5E6D78</color>
+    <color name="contentBodyColor">#000</color>
+    <color name="contentTextColor">#fff</color>
+    <color name="miniTitle">#fff</color>
+</resources>

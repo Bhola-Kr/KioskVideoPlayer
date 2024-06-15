@@ -1,0 +1,128 @@
+{
+  "project_info": {
+    "project_number": "336180604339",
+    "firebase_url": "https://recent-chat-7fd34-default-rtdb.firebaseio.com",
+    "project_id": "recent-chat-7fd34",
+    "storage_bucket": "recent-chat-7fd34.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336180604339:android:80bf67a3ffadac6b842fc6",
+        "android_client_info": {
+          "package_name": "com.chat.recentchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336180604339-jnajmq3565tkeaqetd2u2lmontb6c75a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ZPn4fuAHHNaEI8gSd9fRb3XhWriRnTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336180604339-jnajmq3565tkeaqetd2u2lmontb6c75a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-3230017247689957~1089949371"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336180604339:android:62362eac92526926842fc6",
+        "android_client_info": {
+          "package_name": "com.kiosk.kioskvideoplayer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336180604339-jnajmq3565tkeaqetd2u2lmontb6c75a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ZPn4fuAHHNaEI8gSd9fRb3XhWriRnTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336180604339-jnajmq3565tkeaqetd2u2lmontb6c75a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336180604339:android:ecc9a92cff96699a842fc6",
+        "android_client_info": {
+          "package_name": "com.rcent.threadsdownloader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336180604339-jnajmq3565tkeaqetd2u2lmontb6c75a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ZPn4fuAHHNaEI8gSd9fRb3XhWriRnTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336180604339-jnajmq3565tkeaqetd2u2lmontb6c75a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336180604339:android:17cc3c0b4c416333842fc6",
+        "android_client_info": {
+          "package_name": "com.videochat.recentchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336180604339-jnajmq3565tkeaqetd2u2lmontb6c75a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ZPn4fuAHHNaEI8gSd9fRb3XhWriRnTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336180604339-jnajmq3565tkeaqetd2u2lmontb6c75a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

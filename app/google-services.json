@@ -38,9 +38,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:336180604339:android:62362eac92526926842fc6",
+        "mobilesdk_app_id": "1:336180604339:android:60de1813594b9457842fc6",
         "android_client_info": {
-          "package_name": "com.kiosk.kioskvideoplayer"
+          "package_name": "com.koisk.videokiosk"
         }
       },
       "oauth_client": [

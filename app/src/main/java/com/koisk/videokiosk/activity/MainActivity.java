@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton rbVideo, rbImage, rbBoth;
     private EditText etTimeInSec;
     private SpDatabase spDatabase;
+    private android.app.ProgressDialog progressDialog;
     private ActivityResultLauncher<String[]> requestPermissionsLauncher;
 
     private String storedMediaType = "BOTH";
@@ -70,23 +71,30 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions();
         btPlayKiosk.setOnClickListener(view -> {
             try {
-                AdManager.showInterstitial(this, () -> {
-                    LocalData.setSupportMedia(storedMediaType);
-                    String imageDisplayTime = etTimeInSec.getText().toString();
-                    int imageDisplayInterval = 15;
-                    if (!imageDisplayTime.isEmpty()) {
-                        imageDisplayInterval = Integer.parseInt(imageDisplayTime);
-                    }
-                    LocalData.setImageDisplayInterval(imageDisplayInterval);
+                showProgress();
+                if (LocalData.allMediaList != null) {
+                    LocalData.allMediaList.clear();
+                }
+                String saveMediaType = new SpDatabase(this).getString(Constant.KEY_MEDIA_TYPE);
+                LocalData.setSupportMedia(saveMediaType);
+                String imageDisplayTime = etTimeInSec.getText().toString();
+                int imageDisplayInterval = 15;
+                if (!imageDisplayTime.isEmpty()) {
+                    imageDisplayInterval = Integer.parseInt(imageDisplayTime);
+                }
+                LocalData.setImageDisplayInterval(imageDisplayInterval);
+                StorageUtil.readFilesFromFolder(getApplicationContext());
 
-                    StorageUtil.readFilesFromFolder(getApplicationContext());
-                    if (LocalData.allMediaList.isEmpty()) {
-                        showNoFilesFoundAlert();
-                    } else {
-                        startActivity(new Intent(getApplicationContext(), VideoActivity.class));
-                    }
-                });
-
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    hideProgress();
+                    AdManager.showInterstitial(this, () -> {
+                        if (LocalData.allMediaList.isEmpty()) {
+                            showNoFilesFoundAlert();
+                        } else {
+                            startActivity(new Intent(getApplicationContext(), VideoActivity.class));
+                        }
+                    });
+                }, 4000); // 2 seconds
             } catch (Exception e) {
                 Log.d("error", e.toString());
             }
@@ -172,6 +180,22 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+
+    private void showProgress() {
+        if (progressDialog == null) {
+            progressDialog = new android.app.ProgressDialog(this);
+            progressDialog.setMessage("Loading...");
+            progressDialog.setCancelable(false);
+        }
+        progressDialog.show();
+    }
+
+    private void hideProgress() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
 
     private void showNoFilesFoundAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

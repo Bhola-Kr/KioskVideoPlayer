@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.koisk.videokiosk.R;
+import com.koisk.videokiosk.ads.AdManager;
 import com.koisk.videokiosk.storage.Constant;
 import com.koisk.videokiosk.storage.SpDatabase;
 import com.koisk.videokiosk.utils.VideoPlayer;
@@ -40,6 +41,7 @@ public class VideoActivity extends AppCompatActivity {
         exitIcon = findViewById(R.id.exitIcon);
         exitIcon.setOnClickListener(v -> showExitConfirmationDialog());
 
+        AdManager.loadBanner(VideoActivity.this, R.id.adView);
         videoSetup();
     }
 

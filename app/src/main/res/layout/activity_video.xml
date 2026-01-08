@@ -13,12 +13,12 @@
         android:layout_height="match_parent" />
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <ImageView
-        android:visibility="gone"
         android:id="@+id/exitIcon"
         android:layout_width="@dimen/_28sdp"
         android:layout_height="@dimen/_28sdp"

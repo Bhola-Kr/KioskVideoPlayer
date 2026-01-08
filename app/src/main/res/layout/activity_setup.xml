@@ -6,450 +6,466 @@
     android:background="@color/background_color"
     tools:context=".activity.SetupActivity">
 
-    <RelativeLayout
-        android:id="@+id/header"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_20sdp"
-        android:paddingHorizontal="@dimen/_10sdp">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/ivBack"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:padding="7dp"
-            android:src="@drawable/sharp_arrow_back_24" />
-
-        <TextView
-            android:id="@+id/textView2"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Kiosk Settings"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_40sdp">
 
-    <TextView
-        android:id="@+id/textViewSubHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="@dimen/_20sdp"
-        android:gravity="center"
-        android:paddingHorizontal="@dimen/_20sdp"
-        android:text="Use the options below to configure the video playback settings for your kiosk. Each setting allows you to control specific aspects of the Kiosk experience."
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+            <RelativeLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:paddingHorizontal="@dimen/_10sdp">
 
-    <TextView
-        android:id="@+id/tvVideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewSubHeader"
-        android:layout_marginHorizontal="@dimen/_20sdp"
-        android:text="Video Control"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_18sdp" />
+                <ImageView
+                    android:id="@+id/ivBack"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:padding="7dp"
+                    android:src="@drawable/sharp_arrow_back_24" />
 
-    <LinearLayout
-        android:id="@+id/llVideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvVideo"
-        android:layout_marginHorizontal="@dimen/_20sdp"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Kiosk Settings"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/textViewSubHeader"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_weight="2"
-                android:text="Screen Orientation"
+                android:layout_below="@id/header"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_20sdp"
+                android:text="Use the options below to configure the video playback settings for your kiosk. Each setting allows you to control specific aspects of the Kiosk experience."
                 android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <RadioGroup
-                android:id="@+id/RadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/orientationAllowRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Allow"
-                    android:textColor="@color/white" />
-
-                <RadioButton
-                    android:id="@+id/orientationRestrictRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Restrict"
-                    android:textColor="@color/white" />
-
-            </RadioGroup>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/screenOrientationDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="When allowed, the video orientation changes based on the device's orientation."
-            android:textColor="@color/gray_color"
-            android:textSize="11sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
+                android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/tvVideo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_weight="2"
-                android:text="Play in Loop"
+                android:layout_below="@id/textViewSubHeader"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:text="Video Control"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textSize="@dimen/_18sdp" />
 
-            <RadioGroup
-                android:id="@+id/playInLoopRadioGroup"
+            <LinearLayout
+                android:id="@+id/llVideo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:layout_below="@id/tvVideo"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:orientation="vertical">
 
-                <RadioButton
-                    android:id="@+id/playInLoopAllowRadio"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Allow"
-                    android:textColor="@color/white" />
+                    android:orientation="horizontal"
+                    android:weightSum="3">
 
-                <RadioButton
-                    android:id="@+id/playInLoopRestrictRadio"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_weight="2"
+                        android:text="Screen Orientation"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/RadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/orientationAllowRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Allow"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/orientationRestrictRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Restrict"
+                            android:textColor="@color/white" />
+
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/screenOrientationDescription"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Restrict"
-                    android:textColor="@color/white" />
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="When allowed, the video orientation changes based on the device's orientation."
+                    android:textColor="@color/gray_color"
+                    android:textSize="11sp" />
 
-            </RadioGroup>
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="3">
 
-        <TextView
-            android:id="@+id/playInLoopDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="When allowed, the video will play continuously in a loop."
-            android:textColor="@color/gray_color"
-            android:textSize="11sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_weight="2"
+                        android:text="Play in Loop"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
+                    <RadioGroup
+                        android:id="@+id/playInLoopRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/playInLoopAllowRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Allow"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/playInLoopRestrictRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Restrict"
+                            android:textColor="@color/white" />
+
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/playInLoopDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="When allowed, the video will play continuously in a loop."
+                    android:textColor="@color/gray_color"
+                    android:textSize="11sp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_weight="2"
+                        android:text="Play Fullscreen"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/statusRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/statusAllowRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Allow"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/statusRestrictRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Restrict"
+                            android:textColor="@color/white" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/statusBarDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="When enabled, videos/images will play in fullscreen mode continuously, and the screen will remain active indefinitely."
+                    android:textColor="@color/gray_color"
+                    android:textSize="11sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_weight="2"
+                        android:text="Show Video Control Buttons"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/controlRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/controlAllowRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Allow"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/controlRestrictRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Restrict"
+                            android:textColor="@color/white" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/showVideoControlButtonsDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="When allowed, the video control buttons will be visible during playback."
+                    android:textColor="@color/gray_color"
+                    android:textSize="11sp" />
+            </LinearLayout>
 
             <TextView
+                android:id="@+id/tvHardware"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_weight="2"
-                android:text="Show Video Control Buttons"
+                android:layout_below="@id/llVideo"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:text="Hardware Control"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textSize="@dimen/_18sdp" />
 
-            <RadioGroup
-                android:id="@+id/controlRadioGroup"
+            <LinearLayout
+                android:id="@+id/llHardware"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:layout_below="@id/tvHardware"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:orientation="vertical">
 
-                <RadioButton
-                    android:id="@+id/controlAllowRadio"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Allow"
-                    android:textColor="@color/white" />
+                    android:orientation="horizontal"
+                    android:weightSum="3">
 
-                <RadioButton
-                    android:id="@+id/controlRestrictRadio"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_weight="2"
+                        android:text="Volume Button"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/volumeRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/volumeAllowRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Allow"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/volumeRestrictRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Restrict"
+                            android:textColor="@color/white" />
+
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/volumeButtonDescription"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Restrict"
-                    android:textColor="@color/white" />
-            </RadioGroup>
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="When allowed, the volume buttons will function normally."
+                    android:textColor="@color/gray_color"
+                    android:textSize="11sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_weight="2"
+                        android:text="Back Navigation"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/backButtonRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/navigationAllowRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Allow"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/navigationRestrictRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Restrict"
+                            android:textColor="@color/white" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/navigationButtonsDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="When Restrict, back navigation of device will be disabled"
+                    android:textColor="@color/gray_color"
+                    android:textSize="11sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_weight="2"
+                        android:text="Recent Navigation"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/recentRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/recentAllowRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Allow"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/recentRestrictRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Restrict"
+                            android:textColor="@color/white" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/navigationRecentDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="When Restrict, Recent navigation of device will be disabled"
+                    android:textColor="@color/gray_color"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/showVideoControlButtonsDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="When allowed, the video control buttons will be visible during playback."
-            android:textColor="@color/gray_color"
-            android:textSize="11sp" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvHardware"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/llVideo"
-        android:layout_marginHorizontal="@dimen/_20sdp"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:text="Hardware Control"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_18sdp" />
-
-    <LinearLayout
-        android:id="@+id/llHardware"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvHardware"
-        android:layout_marginHorizontal="@dimen/_20sdp"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_weight="2"
-                android:text="Play Fullscreen"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <RadioGroup
-                android:id="@+id/statusRadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/statusAllowRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Allow"
-                    android:textColor="@color/white" />
-
-                <RadioButton
-                    android:id="@+id/statusRestrictRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Restrict"
-                    android:textColor="@color/white" />
-            </RadioGroup>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/statusBarDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="When enabled, videos/images will play in fullscreen mode continuously, and the screen will remain active indefinitely."
-            android:textColor="@color/gray_color"
-            android:textSize="11sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_weight="2"
-                android:text="Volume Button"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <RadioGroup
-                android:id="@+id/volumeRadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/volumeAllowRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Allow"
-                    android:textColor="@color/white" />
-
-                <RadioButton
-                    android:id="@+id/volumeRestrictRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Restrict"
-                    android:textColor="@color/white" />
-
-            </RadioGroup>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/volumeButtonDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="When allowed, the volume buttons will function normally."
-            android:textColor="@color/gray_color"
-            android:textSize="11sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_weight="2"
-                android:text="Back Navigation"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <RadioGroup
-                android:id="@+id/backButtonRadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/navigationAllowRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Allow"
-                    android:textColor="@color/white" />
-
-                <RadioButton
-                    android:id="@+id/navigationRestrictRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Restrict"
-                    android:textColor="@color/white" />
-            </RadioGroup>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/navigationButtonsDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="When Restrict, back navigation of device will be disabled"
-            android:textColor="@color/gray_color"
-            android:textSize="11sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_weight="2"
-                android:text="Recent Navigation"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <RadioGroup
-                android:id="@+id/recentRadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/recentAllowRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Allow"
-                    android:textColor="@color/white" />
-
-                <RadioButton
-                    android:id="@+id/recentRestrictRadio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:text="Restrict"
-                    android:textColor="@color/white" />
-            </RadioGroup>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/navigationRecentDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="When Restrict, Recent navigation of device will be disabled"
-            android:textColor="@color/gray_color"
-            android:textSize="11sp" />
-
-    </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

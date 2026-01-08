@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class LocalData {
 
     public static boolean isLocked = false;
-    public static boolean supportVideo = true;
-    public static boolean supportImage = true;
+    public static String supportMedia = "BOTH";
+
     public static int imageDisplayInterval = 30; // In second
     public static boolean interstitialAd = true;
     public static boolean bannerAd = true;
@@ -23,12 +23,12 @@ public class LocalData {
         LocalData.isLocked = isLocked;
     }
 
-    public static void setSupportVideo(boolean supportVideo) {
-        LocalData.supportVideo = supportVideo;
+    public static String getSupportMedia() {
+        return supportMedia;
     }
 
-    public static void setSupportImage(boolean supportImage) {
-        LocalData.supportImage = supportImage;
+    public static void setSupportMedia(String supportMedia) {
+        LocalData.supportMedia = supportMedia;
     }
 
     public static void setImageDisplayInterval(int imageDisplayInterval) {

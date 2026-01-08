@@ -224,8 +224,18 @@ public class StorageUtil {
                         listMediaFiles(file); // Recursive call for directories
                     } else {
                         String fileType = file.getType();
-                        if (fileType != null && (fileType.startsWith("image/") || fileType.startsWith("video/"))) {
-                            LocalData.allMediaList.add(new File(file.getUri().getPath()));
+                        if (LocalData.getSupportMedia().equalsIgnoreCase("IMAGE")) {
+                            if (fileType != null && (fileType.startsWith("image/"))) {
+                                LocalData.allMediaList.add(new File(file.getUri().getPath()));
+                            }
+                        } else if (LocalData.getSupportMedia().equalsIgnoreCase("VIDEO")) {
+                            if (fileType != null && fileType.startsWith("video/")) {
+                                LocalData.allMediaList.add(new File(file.getUri().getPath()));
+                            }
+                        } else {
+                            if (fileType != null && (fileType.startsWith("image/") || fileType.startsWith("video/"))) {
+                                LocalData.allMediaList.add(new File(file.getUri().getPath()));
+                            }
                         }
                     }
                 }

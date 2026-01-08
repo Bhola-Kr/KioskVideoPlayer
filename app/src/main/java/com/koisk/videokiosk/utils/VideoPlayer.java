@@ -3,6 +3,7 @@ package com.koisk.videokiosk.utils;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
@@ -80,12 +81,15 @@ public class VideoPlayer {
             videoView.setVisibility(VideoView.GONE);
             imageView.setVisibility(ImageView.VISIBLE);
             Glide.with(context).load(mediaFile).into(imageView);
-            // Display each image for 5 seconds
             nextMediaRunnable = () -> {
                 currentMediaIndex++;
                 playNextMedia();
             };
-            handler.postDelayed(nextMediaRunnable, 5000);
+            try {
+                handler.postDelayed(nextMediaRunnable, 1000 * LocalData.imageDisplayInterval);
+            } catch (Exception e) {
+                Log.d("error", e.getLocalizedMessage());
+            }
         } else {
             // Invalid file format, skip to the next media
             currentMediaIndex++;

@@ -46,10 +46,57 @@
                 android:textAlignment="center"
                 android:textColor="@color/gray_color" />
 
+            <LinearLayout
+                android:id="@+id/llMediaType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/llHardware"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvMediaType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select Media Type"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp" />
+
+                <RadioGroup
+                    android:id="@+id/mediaTypeRadioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/rbVideo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:text="Play Videos Only"
+                        android:textColor="@color/white" />
+
+                    <RadioButton
+                        android:id="@+id/rbImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:text="Display Images Only"
+                        android:textColor="@color/white" />
+
+                    <RadioButton
+                        android:id="@+id/rbBoth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:text="Play Both Videos and Images"
+                        android:textColor="@color/white" />
+                </RadioGroup>
+            </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_16sdp"
                 android:paddingVertical="@dimen/_5sdp"
                 android:text="Image Show Time (seconds)"
                 android:textColor="@color/miniTitle"
@@ -60,37 +107,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_bg"
-                android:hint="Default: 15"
-                android:textColorHint="@color/grey"
-                android:textColor="@color/black"
-                android:inputType="numberDecimal"
+                android:hint="Default: 15 Seconds"
+                android:inputType="number"
+                android:text="15"
+                android:maxLength="5"
                 android:paddingHorizontal="@dimen/_5sdp"
-                android:paddingVertical="@dimen/_8sdp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:text="Choose a folder for playing videos/images"
-                android:textColor="@color/miniTitle"
-                android:textSize="@dimen/_11sdp" />
-
-            <Button
-                android:id="@+id/btnDir"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_45sdp"
-                android:backgroundTint="@color/red_shopping_list_title"
-                android:paddingVertical="@dimen/_5sdp"
-                android:text="Select Path"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvPath"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Current Path: "
-                android:textColor="@color/miniTitle"
+                android:paddingVertical="8dp"
+                android:textColor="@color/white_color"
+                android:textColorHint="@color/grey"
                 android:textSize="@dimen/_11sdp" />
 
             <CheckBox
@@ -99,7 +123,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:text="When the device starts, it automatically launches in kiosk mode."
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="match_parent"

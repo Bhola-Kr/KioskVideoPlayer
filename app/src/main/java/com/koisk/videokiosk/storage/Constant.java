@@ -3,6 +3,8 @@ package com.koisk.videokiosk.storage;
 public class Constant {
 
     public static final String KEY_ORIENTATION = "KEY_ORIENTATION";
+    public static final String KEY_IMAGE_SHOW_TIME = "KEY_IMAGE_SHOW_TIME";
+    public static final String KEY_MEDIA_TYPE = "KEY_MEDIA_TYPE";
     public static final String KEY_PLAY_IN_LOOP = "KEY_PLAY_IN_LOOP";
     public static final String KEY_SHOW_VIDEO_CONTROLS = "KEY_SHOW_VIDEO_CONTROLS";
 

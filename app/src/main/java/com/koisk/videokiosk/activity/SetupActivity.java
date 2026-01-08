@@ -51,6 +51,7 @@ public class SetupActivity extends AppCompatActivity {
         setRadioGroupValue(statusRadioGroup, spDatabase.getBoolean(Constant.KEY_STATUS_BAR));
         setRadioGroupValue(volumeRadioGroup, spDatabase.getBoolean(Constant.KEY_VOLUME));
         setRadioGroupValue(backButtonRadioGroup, spDatabase.getBoolean(Constant.KEY_BACK_BUTTON));
+        setRadioGroupValue(recentButtonRadioGroup, spDatabase.getBoolean(Constant.KEY_RECENT_BUTTON));
     }
 
     private void setRadioGroupValue(RadioGroup group, boolean isAllowed) {

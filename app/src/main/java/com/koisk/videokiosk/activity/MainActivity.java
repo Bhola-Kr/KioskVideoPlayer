@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     private void showNoFilesFoundAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No Media Files Found");
-        builder.setMessage("No video or image files were found in the storage directory.");
+        builder.setMessage("No video or image files were found. Please make sure storage permissions are enabled and your device contains media files.");
         builder.setPositiveButton("OK", (dialog, id) -> {
             // Close the dialog
             dialog.dismiss();

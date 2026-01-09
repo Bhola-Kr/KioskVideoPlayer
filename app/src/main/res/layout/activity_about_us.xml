@@ -115,7 +115,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Contact Us:"
+                android:text="Contact us for any customization or special requirements."
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -132,7 +132,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Phone: +91 88 265 20717"
+                android:text="WhatsApp: +91 88265 20717"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:layout_marginBottom="@dimen/_5sdp" />

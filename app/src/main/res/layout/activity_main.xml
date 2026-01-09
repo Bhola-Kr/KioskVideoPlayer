@@ -156,5 +156,20 @@
         </LinearLayout>
     </ScrollView>
 
+    <TextView
+        android:layout_alignParentBottom="true"
+        android:textAlignment="center"
+        android:id="@+id/tvFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="© 2026 Kiosk App · Help: recentchathelp@gmail.com"
+        android:textSize="12sp"
+        android:textColor="#888888"
+        android:autoLink="email"
+        android:padding="8dp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_gravity="center_horizontal"/>
+
+
 
 </RelativeLayout>

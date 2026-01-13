@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,6 +26,8 @@ import com.koisk.videokiosk.storage.Constant;
 import com.koisk.videokiosk.storage.LocalData;
 import com.koisk.videokiosk.storage.SpDatabase;
 import com.koisk.videokiosk.storage.StorageUtil;
+import com.koisk.videokiosk.utils.RemoteConfigManager;
+import com.koisk.videokiosk.utils.UserRegistrar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -103,11 +103,9 @@ public class MainActivity extends AppCompatActivity {
 
         ivSettings.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), SettingsActivity.class)));
 
-        AdManager.loadBanner(MainActivity.this, R.id.adView);
-        AdManager.loadInterstitial(MainActivity.this);
-
         setupImageShowTime();
         setupMediaTypeSelection();
+        UserRegistrar.registerIfNeeded(this);
     }
 
     private void setupImageShowTime() {
@@ -208,4 +206,21 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    protected void onStart() {
+        super.onStart();
+        RemoteConfigManager.startListening(this, showAds -> {
+            LocalData.interstitialAd = showAds;
+            LocalData.bannerAd = showAds;
+            AdManager.loadBanner(MainActivity.this, R.id.adView);
+            AdManager.loadInterstitial(MainActivity.this);
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RemoteConfigManager.stopListening(this);
+    }
+
 }

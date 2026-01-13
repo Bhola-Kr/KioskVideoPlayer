@@ -125,7 +125,7 @@ public class AdManager {
         if (LocalData.isBannerAd()) {
             AdView adView = new AdView(context);
             adView.setAdSize(AdSize.BANNER);
-            adView.setAdUnitId(getInterstitialAdId());
+            adView.setAdUnitId(getBannerAdId());
             AdRequest adRequest = new AdRequest.Builder().build();
             AdView mAdView = ((Activity) context).findViewById(adViewId);
             mAdView.loadAd(adRequest);

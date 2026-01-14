@@ -13,10 +13,10 @@
         android:layout_height="match_parent" />
 
     <ImageView
-        android:visibility="gone"
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 
     <com.google.android.gms.ads.AdView
@@ -36,13 +36,81 @@
         android:id="@+id/exitIcon"
         android:layout_width="@dimen/_28sdp"
         android:layout_height="@dimen/_28sdp"
-        android:layout_marginTop="@dimen/_40sdp"
-        android:layout_marginEnd="@dimen/_24sdp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Exit"
         android:src="@drawable/baseline_exit_to_app_24"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/teal_200" />
+
+    <TextView
+        android:id="@+id/watermarkTextTop"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="126dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:padding="6dp"
+
+        android:singleLine="true"
+        android:text="Upgrade to Premium to remove this watermark"
+        android:textColor="@color/red_color"
+        android:textSize="@dimen/_24sdp"
+        android:textStyle="bold"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/removeWatermarkIconTop"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Remove watermark"
+        android:src="@drawable/outline_close_24"
+        app:layout_constraintBottom_toTopOf="@id/watermarkTextTop"
+        app:layout_constraintEnd_toEndOf="@id/watermarkTextTop"
+        app:tint="@color/red_color" />
+
+
+    <TextView
+        android:id="@+id/watermarkText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_24sdp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+
+        android:padding="8dp"
+        android:singleLine="true"
+        android:text="Upgrade to Premium  •  Remove this now"
+        android:textColor="@color/red_color"
+        android:textSize="@dimen/_24sdp"
+        android:textStyle="bold"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <!-- Remove watermark icon -->
+    <ImageView
+        android:id="@+id/removeWatermarkIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Upgrade to Premium"
+        android:src="@drawable/outline_close_24"
+        app:layout_constraintBottom_toTopOf="@id/watermarkText"
+        app:layout_constraintEnd_toEndOf="@id/watermarkText"
+        app:tint="@color/red_color" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

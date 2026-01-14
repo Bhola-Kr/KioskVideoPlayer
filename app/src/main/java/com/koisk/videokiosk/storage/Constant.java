@@ -7,6 +7,7 @@ public class Constant {
     public static final String KEY_MEDIA_TYPE = "KEY_MEDIA_TYPE";
     public static final String KEY_PLAY_IN_LOOP = "KEY_PLAY_IN_LOOP";
     public static final String KEY_SHOW_VIDEO_CONTROLS = "KEY_SHOW_VIDEO_CONTROLS";
+    public static final String KEY_EXIT_VIDEO_CONTROLS = "KEY_EXIT_VIDEO_CONTROLS";
 
     public static final String KEY_STATUS_BAR = "KEY_STATUS_BAR";
     public static final String KEY_VOLUME = "KEY_VOLUME";

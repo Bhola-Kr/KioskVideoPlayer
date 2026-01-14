@@ -16,6 +16,7 @@ public class SetupActivity extends AppCompatActivity {
     private RadioGroup orientationRadioGroup;
     private RadioGroup playInLoopRadioGroup;
     private RadioGroup controlRadioGroup;
+    private RadioGroup exitRadioGroup;
     private RadioGroup statusRadioGroup;
     private RadioGroup volumeRadioGroup;
     private RadioGroup backButtonRadioGroup;
@@ -35,6 +36,7 @@ public class SetupActivity extends AppCompatActivity {
         orientationRadioGroup = findViewById(R.id.RadioGroup);
         playInLoopRadioGroup = findViewById(R.id.playInLoopRadioGroup);
         controlRadioGroup = findViewById(R.id.controlRadioGroup);
+        exitRadioGroup = findViewById(R.id.exitRadioGroup);
         statusRadioGroup = findViewById(R.id.statusRadioGroup);
         volumeRadioGroup = findViewById(R.id.volumeRadioGroup);
         backButtonRadioGroup = findViewById(R.id.backButtonRadioGroup);
@@ -48,6 +50,7 @@ public class SetupActivity extends AppCompatActivity {
         setRadioGroupValue(orientationRadioGroup, spDatabase.getBoolean(Constant.KEY_ORIENTATION));
         setRadioGroupValue(playInLoopRadioGroup, spDatabase.getBoolean(Constant.KEY_PLAY_IN_LOOP));
         setRadioGroupValue(controlRadioGroup, spDatabase.getBoolean(Constant.KEY_SHOW_VIDEO_CONTROLS));
+        setRadioGroupValue(exitRadioGroup, spDatabase.getBoolean(Constant.KEY_EXIT_VIDEO_CONTROLS));
         setRadioGroupValue(statusRadioGroup, spDatabase.getBoolean(Constant.KEY_STATUS_BAR));
         setRadioGroupValue(volumeRadioGroup, spDatabase.getBoolean(Constant.KEY_VOLUME));
         setRadioGroupValue(backButtonRadioGroup, spDatabase.getBoolean(Constant.KEY_BACK_BUTTON));
@@ -76,6 +79,10 @@ public class SetupActivity extends AppCompatActivity {
 
         controlRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             spDatabase.putBoolean(Constant.KEY_SHOW_VIDEO_CONTROLS, isAllow(checkedId));
+        });
+
+        exitRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            spDatabase.putBoolean(Constant.KEY_EXIT_VIDEO_CONTROLS, isAllow(checkedId));
         });
 
         statusRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {

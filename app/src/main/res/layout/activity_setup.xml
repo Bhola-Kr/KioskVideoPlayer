@@ -285,6 +285,58 @@
                     android:text="When allowed, the video control buttons will be visible during playback."
                     android:textColor="@color/gray_color"
                     android:textSize="11sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_weight="2"
+                        android:text="Show Exit Control Buttons"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/exitRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/exitAllowRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Allow"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/exitRestrictRadio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:paddingHorizontal="@dimen/_10sdp"
+                            android:text="Restrict"
+                            android:textColor="@color/white" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/showVideoExitButtonsDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-5dp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:text="When allowed, It will show exit icon on video/image playback screen."
+                    android:textColor="@color/gray_color"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <TextView

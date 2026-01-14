@@ -7,8 +7,11 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -25,9 +28,10 @@ public class VideoActivity extends AppCompatActivity {
     private VideoView videoView;
     private ImageView imageView;
     private VideoPlayer mVideoPlayer;
-    private ImageView exitIcon;
+    private ImageView exitIcon, removeWatermarkIcon, removeWatermarkIconTop;
+    private TextView watermarkText, watermarkTextTop;
     private SpDatabase spDatabase;
-    private boolean orientation, showControls, statusBar, volume, backButton, recentButton;
+    private boolean orientation, showExitIcon, showControls, statusBar, volume, backButton, recentButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,36 +45,65 @@ public class VideoActivity extends AppCompatActivity {
         exitIcon = findViewById(R.id.exitIcon);
         exitIcon.setOnClickListener(v -> showExitConfirmationDialog());
 
+        removeWatermarkIcon = findViewById(R.id.removeWatermarkIcon);
+        removeWatermarkIconTop = findViewById(R.id.removeWatermarkIconTop);
+        watermarkText = findViewById(R.id.watermarkText);
+        watermarkTextTop = findViewById(R.id.watermarkTextTop);
+        watermarkText.setSelected(true);
+        watermarkTextTop.setSelected(true);
+
+
+        removeWatermarkIcon.setOnClickListener(view -> showUpgradeDialog());
+        watermarkText.setOnClickListener(view -> showUpgradeDialog());
+        removeWatermarkIconTop.setOnClickListener(view -> showUpgradeDialog());
+        watermarkTextTop.setOnClickListener(view -> showUpgradeDialog());
+
+
         AdManager.loadBanner(VideoActivity.this, R.id.adView);
         videoSetup();
     }
 
-    private void videoSetup() {
-        try {
-            orientation = spDatabase.getBoolean(Constant.KEY_ORIENTATION);
-//            playInLoop = spDatabase.getBoolean(Constant.KEY_PLAY_IN_LOOP);
-            showControls = spDatabase.getBoolean(Constant.KEY_SHOW_VIDEO_CONTROLS);
-            statusBar = spDatabase.getBoolean(Constant.KEY_STATUS_BAR);
-            volume = spDatabase.getBoolean(Constant.KEY_VOLUME);
-            backButton = spDatabase.getBoolean(Constant.KEY_BACK_BUTTON);
-            recentButton = spDatabase.getBoolean(Constant.KEY_RECENT_BUTTON);
+    private void showUpgradeDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Upgrade to Premium")
+                .setMessage(
+                        "Upgrade to Premium to remove all watermarks and on-screen text.\n" +
+                                "Enjoy an ad-free experience with no interruptions."
+                )
+                .setPositiveButton("Upgrade", (dialog, which) -> {
+                    // navigateToPremium();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
 
-            if (orientation) {
-                this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-            } else {
-                this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-            }
-            if (showControls) {
-                videoView.setMediaController(new android.widget.MediaController(this));
-            }
-            if (statusBar) {
-                windowSetup();
-            }
-            mVideoPlayer = new VideoPlayer(this, videoView, imageView);
-            mVideoPlayer.videoSetup();
-        } catch (Exception e) {
-            Log.d("error", e.getLocalizedMessage());
+    private void videoSetup() {
+        orientation   = spDatabase.getBoolean(Constant.KEY_ORIENTATION);
+        showControls  = spDatabase.getBoolean(Constant.KEY_SHOW_VIDEO_CONTROLS);
+        showExitIcon  = spDatabase.getBoolean(Constant.KEY_EXIT_VIDEO_CONTROLS);
+        statusBar     = spDatabase.getBoolean(Constant.KEY_STATUS_BAR);
+        volume        = spDatabase.getBoolean(Constant.KEY_VOLUME);
+        backButton    = spDatabase.getBoolean(Constant.KEY_BACK_BUTTON);
+        recentButton = spDatabase.getBoolean(Constant.KEY_RECENT_BUTTON);
+
+        exitIcon.setVisibility(showExitIcon ? View.VISIBLE : View.GONE);
+
+        setRequestedOrientation(
+                orientation
+                        ? ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                        : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        );
+
+        if (showControls) {
+            videoView.setMediaController(new MediaController(this));
         }
+
+        if (statusBar) {
+            windowSetup();
+        }
+
+        mVideoPlayer = new VideoPlayer(this, videoView, imageView);
+        mVideoPlayer.videoSetup();
     }
 
     private void windowSetup() {

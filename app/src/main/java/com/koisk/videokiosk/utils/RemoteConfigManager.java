@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.koisk.videokiosk.BuildConfig;
+import com.koisk.videokiosk.firebase.FirebaseConstants;
 
 public final class RemoteConfigManager {
 
@@ -25,9 +26,9 @@ public final class RemoteConfigManager {
     public static void startListening(Activity activity, ConfigCallback callback) {
 
         DatabaseReference rootRef =
-                FirebaseDatabase.getInstance().getReference("video_kiosk");
+                FirebaseDatabase.getInstance().getReference(FirebaseConstants.APP_REF);
 
-        appConfigListener = rootRef.child("app_config")
+        appConfigListener = rootRef.child(FirebaseConstants.APP_CONFIG_REF)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot appSnapshot) {
@@ -72,8 +73,8 @@ public final class RemoteConfigManager {
         String deviceId = getDeviceId(activity);
 
         DatabaseReference userRef = FirebaseDatabase.getInstance()
-                .getReference("video_kiosk")
-                .child("users")
+                .getReference(FirebaseConstants.APP_REF)
+                .child(FirebaseConstants.USERS_REF)
                 .child(deviceId);
 
         if (userConfigListener != null) {
@@ -108,14 +109,14 @@ public final class RemoteConfigManager {
 
     public static void stopListening(Context context) {
         DatabaseReference rootRef =
-                FirebaseDatabase.getInstance().getReference("video_kiosk");
+                FirebaseDatabase.getInstance().getReference(FirebaseConstants.APP_REF);
 
         if (appConfigListener != null) {
-            rootRef.child("app_config").removeEventListener(appConfigListener);
+            rootRef.child(FirebaseConstants.APP_CONFIG_REF).removeEventListener(appConfigListener);
         }
 
         if (userConfigListener != null) {
-            rootRef.child("users")
+            rootRef.child(FirebaseConstants.USERS_REF)
                     .child(getDeviceId(context))
                     .removeEventListener(userConfigListener);
         }

@@ -14,17 +14,12 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-import com.koisk.videokiosk.BuildConfig;
 import com.koisk.videokiosk.storage.LocalData;
 
 public class AdManager {
 
     private static InterstitialAd mInterstitialAd;
     private static boolean loading, showing;
-    private static final String TEST_INTERSTITIAL_ID =
-            "ca-app-pub-3940256099942544/1033173712";
-    private static final String TEST_BANNER_ID =
-            "ca-app-pub-3940256099942544/6300978111";
 
     private static final String RELEASE_INTERSTITIAL_ID =
             "ca-app-pub-3230017247689957/2787940083";
@@ -32,18 +27,12 @@ public class AdManager {
             "ca-app-pub-3230017247689957/9270174689";
 
     private static String getInterstitialAdId() {
-        return BuildConfig.DEBUG
-                ? TEST_INTERSTITIAL_ID
-                : RELEASE_INTERSTITIAL_ID;
+        return RELEASE_INTERSTITIAL_ID;
     }
 
     private static String getBannerAdId() {
-        return BuildConfig.DEBUG
-                ? TEST_BANNER_ID
-                : RELEASE_BANNER_ID;
+        return RELEASE_BANNER_ID;
     }
-
-
 
     public static void Init(Context context) {
         if (!LocalData.isInterstitialAd()) return;

@@ -258,17 +258,6 @@
                 android:textColor="@color/white_color"
                 android:textStyle="bold" />
 
-            <!-- Restore -->
-            <TextView
-                android:id="@+id/tvRestore"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:text="Restore Purchase"
-                android:textAlignment="center"
-                android:textColor="@color/miniTitle"
-                android:textSize="@dimen/_11sdp" />
-
             <!-- Terms -->
             <TextView
                 android:id="@+id/tvTerms"

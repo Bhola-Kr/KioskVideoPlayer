@@ -36,7 +36,7 @@ public class BillingManager {
         void onRestoreEmpty();
     }
 
-    // ✅ Separate listeners (fix overwrite issue)
+    // ✅ Keep both listeners alive (purchase + restore)
     private PurchaseListener newPurchaseListener;
     private PurchaseListener restorePurchaseListener;
 
@@ -69,19 +69,17 @@ public class BillingManager {
             Log.d(TAG, "Purchases size=" + purchases.size());
 
             for (Purchase purchase : purchases) {
-                handlePurchase(purchase, true); // true = from new purchase flow
+                handlePurchase(purchase);
             }
 
         } else if (responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
 
             Log.d(TAG, "User cancelled purchase");
-
             if (newPurchaseListener != null) newPurchaseListener.onUserCancelled();
 
         } else {
 
             Log.e(TAG, "Purchase error: " + billingResult.getDebugMessage());
-
             if (newPurchaseListener != null)
                 newPurchaseListener.onPurchaseFailed(billingResult.getDebugMessage());
         }
@@ -165,6 +163,7 @@ public class BillingManager {
             return;
         }
 
+        // ✅ Save purchase listener
         this.newPurchaseListener = listener;
 
         List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<>();
@@ -232,6 +231,7 @@ public class BillingManager {
             return;
         }
 
+        // ✅ Save purchase listener
         this.newPurchaseListener = listener;
 
         String offerToken = getOfferToken(productDetails);
@@ -263,7 +263,7 @@ public class BillingManager {
                     productDetails.getSubscriptionOfferDetails();
 
             if (offerDetailsList != null && !offerDetailsList.isEmpty()) {
-                return offerDetailsList.get(0).getOfferToken(); // base plan token
+                return offerDetailsList.get(0).getOfferToken();
             }
         } catch (Exception e) {
             Log.e(TAG, "OfferToken error: " + e.getMessage());
@@ -307,7 +307,7 @@ public class BillingManager {
                 if (purchasesList != null && !purchasesList.isEmpty()) {
 
                     for (Purchase purchase : purchasesList) {
-                        handlePurchase(purchase, false); // false = restore
+                        handlePurchase(purchase);
                     }
 
                 } else {
@@ -324,14 +324,12 @@ public class BillingManager {
     // ============================================================
     // ✅ Handle Purchase (ACK required)
     // ============================================================
-    private void handlePurchase(@NonNull Purchase purchase, boolean isNewPurchaseFlow) {
+    private void handlePurchase(@NonNull Purchase purchase) {
 
         Log.d(TAG, "handlePurchase -> state=" + purchase.getPurchaseState()
                 + ", acknowledged=" + purchase.isAcknowledged());
 
         if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-
-            // ⚠️ Recommended: verify purchase on backend before granting premium
 
             if (!purchase.isAcknowledged()) {
 
@@ -344,40 +342,43 @@ public class BillingManager {
 
                     if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                         Log.d(TAG, "Purchase acknowledged successfully");
-                        notifyPurchaseSuccess(purchase, isNewPurchaseFlow);
+                        notifySuccessToAll(purchase);
                     } else {
                         Log.e(TAG, "Acknowledge failed: " + billingResult.getDebugMessage());
-                        notifyPurchaseFailed(billingResult.getDebugMessage(), isNewPurchaseFlow);
+                        notifyFailedToAll(billingResult.getDebugMessage());
                     }
                 });
 
             } else {
                 Log.d(TAG, "Purchase already acknowledged");
-                notifyPurchaseSuccess(purchase, isNewPurchaseFlow);
+                notifySuccessToAll(purchase);
             }
 
         } else if (purchase.getPurchaseState() == Purchase.PurchaseState.PENDING) {
-
-            notifyPurchaseFailed("Purchase pending. Please complete payment.", isNewPurchaseFlow);
-
+            notifyFailedToAll("Purchase pending. Please complete payment.");
         } else {
-            notifyPurchaseFailed("Purchase not completed. State: " + purchase.getPurchaseState(), isNewPurchaseFlow);
+            notifyFailedToAll("Purchase not completed. State: " + purchase.getPurchaseState());
         }
     }
 
-    private void notifyPurchaseSuccess(@NonNull Purchase purchase, boolean isNewPurchaseFlow) {
-        if (isNewPurchaseFlow) {
-            if (newPurchaseListener != null) newPurchaseListener.onPurchaseSuccess(purchase);
-        } else {
-            if (restorePurchaseListener != null) restorePurchaseListener.onPurchaseSuccess(purchase);
+    // ============================================================
+    // ✅ Notify BOTH listeners always (fix consumer callback issue)
+    // ============================================================
+    private void notifySuccessToAll(@NonNull Purchase purchase) {
+        if (newPurchaseListener != null) {
+            newPurchaseListener.onPurchaseSuccess(purchase);
+        }
+        if (restorePurchaseListener != null) {
+            restorePurchaseListener.onPurchaseSuccess(purchase);
         }
     }
 
-    private void notifyPurchaseFailed(@NonNull String message, boolean isNewPurchaseFlow) {
-        if (isNewPurchaseFlow) {
-            if (newPurchaseListener != null) newPurchaseListener.onPurchaseFailed(message);
-        } else {
-            if (restorePurchaseListener != null) restorePurchaseListener.onPurchaseFailed(message);
+    private void notifyFailedToAll(@NonNull String message) {
+        if (newPurchaseListener != null) {
+            newPurchaseListener.onPurchaseFailed(message);
+        }
+        if (restorePurchaseListener != null) {
+            restorePurchaseListener.onPurchaseFailed(message);
         }
     }
 

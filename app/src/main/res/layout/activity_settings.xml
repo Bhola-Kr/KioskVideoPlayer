@@ -60,8 +60,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_10sdp"
                         android:orientation="vertical"
-                        android:paddingVertical="@dimen/_2sdp"
-                        android:visibility="gone">
+                        android:paddingVertical="@dimen/_2sdp">
 
                         <TextView
                             android:id="@+id/tvSubscription"

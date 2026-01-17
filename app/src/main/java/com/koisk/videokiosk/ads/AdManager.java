@@ -121,6 +121,16 @@ public class AdManager {
         }
     }
 
+    public static void hideBannerAd(Activity activity, int adViewId) {
+        try {
+            AdView adView = activity.findViewById(adViewId);
+            if (adView != null) {
+                adView.setVisibility(android.view.View.GONE);
+            }
+        } catch (Exception ignored) {}
+    }
+
+
     public interface AdListener {
         void onCompleted();
     }

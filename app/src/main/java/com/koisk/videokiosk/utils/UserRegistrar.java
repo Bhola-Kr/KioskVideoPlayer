@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.koisk.videokiosk.BuildConfig;
+import com.koisk.videokiosk.firebase.FirebaseConstants;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -24,7 +25,7 @@ public final class UserRegistrar {
 
         DatabaseReference userRef = FirebaseDatabase
                 .getInstance()
-                .getReference("video_kiosk").child("users")
+                .getReference(FirebaseConstants.APP_REF).child(FirebaseConstants.USERS_REF)
                 .child(deviceId);
 
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {

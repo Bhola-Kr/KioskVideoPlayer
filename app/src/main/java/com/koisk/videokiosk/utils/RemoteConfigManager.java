@@ -15,6 +15,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.koisk.videokiosk.BuildConfig;
 import com.koisk.videokiosk.firebase.FirebaseConstants;
+import com.koisk.videokiosk.storage.LocalData;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class RemoteConfigManager {
 
@@ -96,8 +100,28 @@ public final class RemoteConfigManager {
                                         snapshot.child("adsEnabled").getValue(Boolean.class)
                                 );
 
-                        boolean finalAdsState =
-                                !isPremium && adsEnabled && adsDefault;
+                        Long premiumExpiryAt =
+                                snapshot.child("premiumExpiryAt").getValue(Long.class);
+
+                        long now = System.currentTimeMillis();
+
+                        // ✅ If premium expired → turn OFF premium automatically
+                        if (isPremium && premiumExpiryAt != null && now > premiumExpiryAt) {
+
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("isPremium", false);
+                            updates.put("adsEnabled", true);
+                            updates.put("premiumExpiredAt", now);
+
+                            userRef.updateChildren(updates);
+
+                            // Update local values after expiry
+                            isPremium = false;
+                            adsEnabled = true;
+                        }
+
+                        // Final Ads State
+                        boolean finalAdsState = !isPremium && adsEnabled && adsDefault;
 
                         callback.onConfigReady(finalAdsState);
                     }
@@ -140,12 +164,40 @@ public final class RemoteConfigManager {
         void onConfigReady(boolean showAds);
     }
 
-    private static String getDeviceId(Context context) {
+    public static String getDeviceId(Context context) {
         return Settings.Secure.getString(
                 context.getContentResolver(),
                 Settings.Secure.ANDROID_ID
         );
     }
+
+    // ============================================================
+    // ✅ Activate Premium (1 month expiry)
+    // ============================================================
+    public static void activatePremium(Context context) {
+
+        String deviceId = getDeviceId(context);
+
+        DatabaseReference userRef = FirebaseDatabase
+                .getInstance()
+                .getReference(FirebaseConstants.APP_REF)
+                .child(FirebaseConstants.USERS_REF)
+                .child(deviceId);
+
+        long now = System.currentTimeMillis();
+
+        // ✅ Expiry after 30 days (1 month approx)
+        long expiry = now + (30L * 24 * 60 * 60 * 1000);
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("isPremium", true);
+        updates.put("adsEnabled", false);
+        updates.put("premiumActivatedAt", now);
+        updates.put("premiumExpiryAt", expiry);
+
+        LocalData.interstitialAd = false;
+        LocalData.bannerAd = false;
+
+        userRef.updateChildren(updates);
+    }
 }
-
-

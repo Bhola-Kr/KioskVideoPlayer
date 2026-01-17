@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.koisk.videokiosk.R;
 import com.koisk.videokiosk.ads.AdManager;
+import com.koisk.videokiosk.payment.SubscriptionActivity;
 import com.koisk.videokiosk.utils.Utility;
 
 public class SettingsActivity extends AppCompatActivity {
-
     private TextView tvMemberShip, tvKiosk, tvContact, tvShare, tvRate, tvAbout, tvVersion;
 
     @Override
@@ -33,8 +32,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         AdManager.loadBanner(SettingsActivity.this, R.id.adView);
 
-        tvMemberShip.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), PaymentsActivity.class)));
-
         tvKiosk.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), SetupActivity.class)));
 
         tvContact.setOnClickListener(v -> {
@@ -52,6 +49,9 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         tvVersion.setText("Version: " + Utility.getAppVersion(getApplicationContext()));
+        tvMemberShip.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), SubscriptionActivity.class));
+        });
 
     }
 }

@@ -21,7 +21,6 @@ public class BillingManager {
     public interface BillingConnectionListener {
         void onConnected();
         void onDisconnected();
-
         void onError(@NonNull String error);
     }
 
@@ -34,11 +33,12 @@ public class BillingManager {
         void onPurchaseSuccess(@NonNull Purchase purchase);
         void onPurchaseFailed(@NonNull String message);
         void onUserCancelled();
-
         void onRestoreEmpty();
     }
 
-    private PurchaseListener purchaseListener;
+    // ✅ Separate listeners (fix overwrite issue)
+    private PurchaseListener newPurchaseListener;
+    private PurchaseListener restorePurchaseListener;
 
     public BillingManager(Context context) {
         this.context = context;
@@ -48,32 +48,48 @@ public class BillingManager {
                 .enablePendingPurchases(
                         PendingPurchasesParams.newBuilder()
                                 .enableOneTimeProducts()
-                                .enablePrepaidPlans() // ✅ Required for subscriptions/prepaid plans
+                                .enablePrepaidPlans()
                                 .build()
                 )
                 .build();
     }
 
+    // ============================================================
     // 🔥 Purchase callback
+    // ============================================================
     private final PurchasesUpdatedListener purchasesUpdatedListener = (billingResult, purchases) -> {
 
         int responseCode = billingResult.getResponseCode();
 
+        Log.d(TAG, "PurchasesUpdatedListener -> code=" + responseCode
+                + ", msg=" + billingResult.getDebugMessage());
+
         if (responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
+
+            Log.d(TAG, "Purchases size=" + purchases.size());
+
             for (Purchase purchase : purchases) {
-                handlePurchase(purchase);
+                handlePurchase(purchase, true); // true = from new purchase flow
             }
+
         } else if (responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
+
             Log.d(TAG, "User cancelled purchase");
-            if (purchaseListener != null) purchaseListener.onUserCancelled();
+
+            if (newPurchaseListener != null) newPurchaseListener.onUserCancelled();
+
         } else {
+
             Log.e(TAG, "Purchase error: " + billingResult.getDebugMessage());
-            if (purchaseListener != null)
-                purchaseListener.onPurchaseFailed(billingResult.getDebugMessage());
+
+            if (newPurchaseListener != null)
+                newPurchaseListener.onPurchaseFailed(billingResult.getDebugMessage());
         }
     };
 
+    // ============================================================
     // ✅ Connect
+    // ============================================================
     public void startConnection(@NonNull BillingConnectionListener listener) {
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
@@ -83,6 +99,7 @@ public class BillingManager {
                     listener.onConnected();
                 } else {
                     Log.e(TAG, "Billing setup failed: " + billingResult.getDebugMessage());
+                    listener.onError(billingResult.getDebugMessage());
                 }
             }
 
@@ -101,7 +118,6 @@ public class BillingManager {
     // ============================================================
     // ✅ INAPP (One-time products)
     // ============================================================
-
     public void queryInAppProductDetails(@NonNull String productId,
                                          @NonNull ProductDetailsListener listener) {
 
@@ -149,7 +165,7 @@ public class BillingManager {
             return;
         }
 
-        this.purchaseListener = listener;
+        this.newPurchaseListener = listener;
 
         List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<>();
         productDetailsParamsList.add(
@@ -169,7 +185,6 @@ public class BillingManager {
     // ============================================================
     // ✅ SUBS (Monthly subscription)
     // ============================================================
-
     public void querySubscriptionDetails(@NonNull String subscriptionId,
                                          @NonNull ProductDetailsListener listener) {
 
@@ -217,9 +232,8 @@ public class BillingManager {
             return;
         }
 
-        this.purchaseListener = listener;
+        this.newPurchaseListener = listener;
 
-        // 🔥 Offer token is required for SUBS
         String offerToken = getOfferToken(productDetails);
 
         if (offerToken == null) {
@@ -249,8 +263,7 @@ public class BillingManager {
                     productDetails.getSubscriptionOfferDetails();
 
             if (offerDetailsList != null && !offerDetailsList.isEmpty()) {
-                // ✅ Take first offer token (base plan)
-                return offerDetailsList.get(0).getOfferToken();
+                return offerDetailsList.get(0).getOfferToken(); // base plan token
             }
         } catch (Exception e) {
             Log.e(TAG, "OfferToken error: " + e.getMessage());
@@ -261,20 +274,21 @@ public class BillingManager {
     // ============================================================
     // ✅ Restore Purchases (INAPP / SUBS)
     // ============================================================
-
     public void restoreInAppPurchases(@NonNull PurchaseListener listener) {
-        restorePurchasesByType(BillingClient.ProductType.INAPP, listener);
+        this.restorePurchaseListener = listener;
+        restorePurchasesByType(BillingClient.ProductType.INAPP);
     }
 
     public void restoreSubscriptions(@NonNull PurchaseListener listener) {
-        restorePurchasesByType(BillingClient.ProductType.SUBS, listener);
+        this.restorePurchaseListener = listener;
+        restorePurchasesByType(BillingClient.ProductType.SUBS);
     }
 
-    private void restorePurchasesByType(@NonNull String productType,
-                                        @NonNull PurchaseListener listener) {
+    private void restorePurchasesByType(@NonNull String productType) {
 
         if (!isReady()) {
-            listener.onPurchaseFailed("BillingClient is not ready");
+            if (restorePurchaseListener != null)
+                restorePurchaseListener.onPurchaseFailed("BillingClient is not ready");
             return;
         }
 
@@ -284,19 +298,25 @@ public class BillingManager {
 
         billingClient.queryPurchasesAsync(params, (billingResult, purchasesList) -> {
 
+            Log.d(TAG, "Restore query -> type=" + productType
+                    + ", code=" + billingResult.getResponseCode()
+                    + ", msg=" + billingResult.getDebugMessage());
+
             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
 
                 if (purchasesList != null && !purchasesList.isEmpty()) {
+
                     for (Purchase purchase : purchasesList) {
-                        this.purchaseListener = listener;
-                        handlePurchase(purchase);
+                        handlePurchase(purchase, false); // false = restore
                     }
+
                 } else {
-                    listener.onPurchaseFailed("No purchases found for type: " + productType);
+                    if (restorePurchaseListener != null) restorePurchaseListener.onRestoreEmpty();
                 }
 
             } else {
-                listener.onPurchaseFailed(billingResult.getDebugMessage());
+                if (restorePurchaseListener != null)
+                    restorePurchaseListener.onPurchaseFailed(billingResult.getDebugMessage());
             }
         });
     }
@@ -304,8 +324,10 @@ public class BillingManager {
     // ============================================================
     // ✅ Handle Purchase (ACK required)
     // ============================================================
+    private void handlePurchase(@NonNull Purchase purchase, boolean isNewPurchaseFlow) {
 
-    private void handlePurchase(@NonNull Purchase purchase) {
+        Log.d(TAG, "handlePurchase -> state=" + purchase.getPurchaseState()
+                + ", acknowledged=" + purchase.isAcknowledged());
 
         if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
 
@@ -322,22 +344,40 @@ public class BillingManager {
 
                     if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                         Log.d(TAG, "Purchase acknowledged successfully");
-                        if (purchaseListener != null) purchaseListener.onPurchaseSuccess(purchase);
+                        notifyPurchaseSuccess(purchase, isNewPurchaseFlow);
                     } else {
                         Log.e(TAG, "Acknowledge failed: " + billingResult.getDebugMessage());
-                        if (purchaseListener != null)
-                            purchaseListener.onPurchaseFailed(billingResult.getDebugMessage());
+                        notifyPurchaseFailed(billingResult.getDebugMessage(), isNewPurchaseFlow);
                     }
                 });
 
             } else {
                 Log.d(TAG, "Purchase already acknowledged");
-                if (purchaseListener != null) purchaseListener.onPurchaseSuccess(purchase);
+                notifyPurchaseSuccess(purchase, isNewPurchaseFlow);
             }
 
+        } else if (purchase.getPurchaseState() == Purchase.PurchaseState.PENDING) {
+
+            notifyPurchaseFailed("Purchase pending. Please complete payment.", isNewPurchaseFlow);
+
         } else {
-            if (purchaseListener != null)
-                purchaseListener.onPurchaseFailed("Purchase not completed. State: " + purchase.getPurchaseState());
+            notifyPurchaseFailed("Purchase not completed. State: " + purchase.getPurchaseState(), isNewPurchaseFlow);
+        }
+    }
+
+    private void notifyPurchaseSuccess(@NonNull Purchase purchase, boolean isNewPurchaseFlow) {
+        if (isNewPurchaseFlow) {
+            if (newPurchaseListener != null) newPurchaseListener.onPurchaseSuccess(purchase);
+        } else {
+            if (restorePurchaseListener != null) restorePurchaseListener.onPurchaseSuccess(purchase);
+        }
+    }
+
+    private void notifyPurchaseFailed(@NonNull String message, boolean isNewPurchaseFlow) {
+        if (isNewPurchaseFlow) {
+            if (newPurchaseListener != null) newPurchaseListener.onPurchaseFailed(message);
+        } else {
+            if (restorePurchaseListener != null) restorePurchaseListener.onPurchaseFailed(message);
         }
     }
 

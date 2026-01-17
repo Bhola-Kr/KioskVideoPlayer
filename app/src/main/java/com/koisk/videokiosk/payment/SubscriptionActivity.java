@@ -165,6 +165,25 @@ public class SubscriptionActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (billingManager != null && billingManager.isReady()) {
+            billingManager.restoreSubscriptions(new BillingManager.PurchaseListener() {
+                @Override
+                public void onPurchaseSuccess(@NonNull Purchase purchase) {
+                    btnUpgrade.setText("Premium Active ✅");
+                    btnUpgrade.setEnabled(false);
+                }
+
+                @Override public void onPurchaseFailed(@NonNull String message) {}
+                @Override public void onUserCancelled() {}
+                @Override public void onRestoreEmpty() {}
+            });
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (billingManager != null) billingManager.endConnection();

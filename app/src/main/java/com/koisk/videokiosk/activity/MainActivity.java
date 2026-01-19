@@ -2,13 +2,16 @@ package com.koisk.videokiosk.activity;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -29,6 +32,9 @@ import com.koisk.videokiosk.storage.StorageUtil;
 import com.koisk.videokiosk.utils.RemoteConfigManager;
 import com.koisk.videokiosk.utils.UserRegistrar;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button btPlayKiosk;
@@ -36,11 +42,19 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup mediaTypeRadioGroup;
     private RadioButton rbVideo, rbImage, rbBoth;
     private EditText etTimeInSec;
+
     private SpDatabase spDatabase;
     private android.app.ProgressDialog progressDialog;
+
     private ActivityResultLauncher<String[]> requestPermissionsLauncher;
 
     private String storedMediaType = "BOTH";
+
+    // ✅ Flag: only start kiosk after permission when user pressed Play
+    private boolean isPlayRequested = false;
+
+    // ✅ Background executor to avoid ANR
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,69 +62,135 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         spDatabase = new SpDatabase(this);
+
         btPlayKiosk = findViewById(R.id.btPlayKiosk);
         ivSettings = findViewById(R.id.ivSettings);
         mediaTypeRadioGroup = findViewById(R.id.mediaTypeRadioGroup);
-        mediaTypeRadioGroup = findViewById(R.id.mediaTypeRadioGroup);
+
         rbVideo = findViewById(R.id.rbVideo);
         rbImage = findViewById(R.id.rbImage);
         rbBoth = findViewById(R.id.rbBoth);
+
         etTimeInSec = findViewById(R.id.editTextImageShowTime);
 
+        // ✅ Permission callback
         requestPermissionsLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
                 result -> {
-                    if (result.getOrDefault(Manifest.permission.READ_MEDIA_IMAGES, false) &&
-                            result.getOrDefault(Manifest.permission.READ_MEDIA_VIDEO, false) &&
-                            result.getOrDefault(Manifest.permission.READ_EXTERNAL_STORAGE, false)) {
-                        // All permissions granted
-                        StorageUtil.readFilesFromFolder(getApplicationContext());
+
+                    boolean granted = false;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        granted = result.getOrDefault(Manifest.permission.READ_MEDIA_IMAGES, false)
+                                && result.getOrDefault(Manifest.permission.READ_MEDIA_VIDEO, false);
+                    } else {
+                        granted = result.getOrDefault(Manifest.permission.READ_EXTERNAL_STORAGE, false);
+                    }
+
+                    if (granted) {
+                        // ✅ Only proceed if user pressed Play
+                        if (isPlayRequested) {
+                            startKioskFlow();
+                        }
+                    } else {
+                        // ❌ Permission denied
+                        hideProgress();
+                        isPlayRequested = false;
+
+                        if (isPermissionPermanentlyDenied()) {
+                            showPermissionSettingsDialog();
+                        } else {
+                            Toast.makeText(this, "Permission denied. Please allow permission to continue.", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
 
-        requestPermissions();
+        // ❌ Removed auto permission request on app start
+        // requestPermissions();
+
         btPlayKiosk.setOnClickListener(view -> {
-            try {
+            isPlayRequested = true;
+
+            if (hasStoragePermission()) {
+                startKioskFlow();
+            } else {
                 showProgress();
-                if (LocalData.allMediaList != null) {
-                    LocalData.allMediaList.clear();
-                }
-                String saveMediaType = new SpDatabase(this).getString(Constant.KEY_MEDIA_TYPE);
-                LocalData.setSupportMedia(saveMediaType);
-                String imageDisplayTime = etTimeInSec.getText().toString();
-                int imageDisplayInterval = 15;
-                if (!imageDisplayTime.isEmpty()) {
-                    imageDisplayInterval = Integer.parseInt(imageDisplayTime);
-                    if (imageDisplayInterval <= 0) {
-                        Toast.makeText(this, "Interval must be greater than 0", Toast.LENGTH_LONG).show();
-                        hideProgress();
-                        return;
-                    }
-                }
-                LocalData.setImageDisplayInterval(imageDisplayInterval);
-                StorageUtil.readFilesFromFolder(getApplicationContext());
-
-                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                    hideProgress();
-                    AdManager.showInterstitial(this, () -> {
-                        if (LocalData.allMediaList.isEmpty()) {
-                            showNoFilesFoundAlert();
-                        } else {
-                            startActivity(new Intent(getApplicationContext(), VideoActivity.class));
-                        }
-                    });
-                }, 4000); // 2 seconds
-            } catch (Exception e) {
-                Log.d("error", e.toString());
+                requestPermissions();
             }
-
         });
 
-        ivSettings.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), SettingsActivity.class)));
+        ivSettings.setOnClickListener(view ->
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class))
+        );
 
         setupImageShowTime();
         setupMediaTypeSelection();
         UserRegistrar.registerIfNeeded(this);
+    }
+
+    // ✅ Main play flow (safe + background scan)
+    private void startKioskFlow() {
+        try {
+            showProgress();
+
+            // Clear list
+            if (LocalData.allMediaList != null) {
+                LocalData.allMediaList.clear();
+            }
+
+            // Save media type
+            String saveMediaType = new SpDatabase(this).getString(Constant.KEY_MEDIA_TYPE);
+            LocalData.setSupportMedia(saveMediaType);
+
+            // Image interval
+            String imageDisplayTime = etTimeInSec.getText().toString();
+            int imageDisplayInterval = 15;
+
+            if (!imageDisplayTime.isEmpty()) {
+                imageDisplayInterval = Integer.parseInt(imageDisplayTime);
+                if (imageDisplayInterval <= 0) {
+                    Toast.makeText(this, "Interval must be greater than 0", Toast.LENGTH_LONG).show();
+                    hideProgress();
+                    isPlayRequested = false;
+                    return;
+                }
+            }
+
+            LocalData.setImageDisplayInterval(imageDisplayInterval);
+
+            // ✅ Run file scan in background thread (NO ANR)
+            executorService.execute(() -> {
+                try {
+                    StorageUtil.readFilesFromFolder(getApplicationContext());
+
+                    runOnUiThread(() -> {
+                        hideProgress();
+
+                        AdManager.showInterstitial(MainActivity.this, () -> {
+                            if (LocalData.allMediaList == null || LocalData.allMediaList.isEmpty()) {
+                                showNoFilesFoundAlert();
+                            } else {
+                                startActivity(new Intent(getApplicationContext(), VideoActivity.class));
+                            }
+                            isPlayRequested = false;
+                        });
+                    });
+
+                } catch (Exception e) {
+                    runOnUiThread(() -> {
+                        hideProgress();
+                        isPlayRequested = false;
+                        Toast.makeText(MainActivity.this, "Error reading media files", Toast.LENGTH_SHORT).show();
+                    });
+                    Log.d("error", e.toString());
+                }
+            });
+
+        } catch (Exception e) {
+            hideProgress();
+            isPlayRequested = false;
+            Log.d("error", e.toString());
+        }
     }
 
     private void setupImageShowTime() {
@@ -120,12 +200,10 @@ public class MainActivity extends AppCompatActivity {
         etTimeInSec.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // No implementation needed
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // No implementation needed
             }
 
             @Override
@@ -151,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupMediaTypeSelection() {
         storedMediaType = new SpDatabase(this).getString(Constant.KEY_MEDIA_TYPE);
+
         if ("VIDEO".equals(storedMediaType)) {
             rbVideo.setChecked(true);
         } else if ("IMAGE".equals(storedMediaType)) {
@@ -184,6 +263,60 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean hasStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    // ✅ Check if user selected "Don't ask again"
+    private boolean isPermissionPermanentlyDenied() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            boolean showRationaleImages = shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES);
+            boolean showRationaleVideos = shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_VIDEO);
+
+            // if false -> blocked permanently
+            return !showRationaleImages || !showRationaleVideos;
+        } else {
+            boolean showRationale = shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE);
+            return !showRationale;
+        }
+    }
+
+    private void showPermissionSettingsDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Storage Permission Required")
+                .setMessage(
+                        "To play your videos/images, this app needs storage permission.\n\n" +
+                                "How to enable:\n" +
+                                "1) Tap Open Settings\n" +
+                                "2) Go to Permissions\n" +
+                                "3) Allow Photos & Videos (or Storage)\n\n" +
+                                "Then come back and start again."
+                )
+                .setCancelable(false)
+                .setPositiveButton("Open Settings", (dialog, which) -> {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(android.net.Uri.fromParts("package", getPackageName(), null));
+                    startActivity(intent);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+
+    private void showNoFilesFoundAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("No Media Files Found");
+        builder.setMessage("No video or image files were found. Please make sure storage permissions are enabled and your device contains media files.");
+        builder.setPositiveButton("OK", (dialog, id) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void showProgress() {
         if (progressDialog == null) {
             progressDialog = new android.app.ProgressDialog(this);
@@ -199,19 +332,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void showNoFilesFoundAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("No Media Files Found");
-        builder.setMessage("No video or image files were found. Please make sure storage permissions are enabled and your device contains media files.");
-        builder.setPositiveButton("OK", (dialog, id) -> {
-            // Close the dialog
-            dialog.dismiss();
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
+    @Override
     protected void onStart() {
         super.onStart();
         RemoteConfigManager.startListening(this, showAds -> {
@@ -228,4 +349,9 @@ public class MainActivity extends AppCompatActivity {
         RemoteConfigManager.stopListening(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
+    }
 }

@@ -25,7 +25,8 @@ public final class RemoteConfigManager {
     private static ValueEventListener appConfigListener;
     private static ValueEventListener userConfigListener;
 
-    private RemoteConfigManager() {}
+    private RemoteConfigManager() {
+    }
 
     public static void startListening(Activity activity, ConfigCallback callback) {
 
@@ -50,6 +51,21 @@ public final class RemoteConfigManager {
                                         appSnapshot.child("adsEnabledByDefault").getValue(Boolean.class)
                                 );
 
+                        boolean showInterstitialAd =
+                                Boolean.TRUE.equals(
+                                        appSnapshot.child("showInterstitialAd").getValue(Boolean.class)
+                                );
+
+                        boolean showBannerAd =
+                                Boolean.TRUE.equals(
+                                        appSnapshot.child("showBannerAd").getValue(Boolean.class)
+                                );
+
+                        if (adsDefault) {
+                            LocalData.interstitialAd = showInterstitialAd;
+                            LocalData.bannerAd = showBannerAd;
+                        }
+
                         if (forceUpdate
                                 && latestVersion != null
                                 && BuildConfig.VERSION_CODE < latestVersion) {
@@ -65,7 +81,8 @@ public final class RemoteConfigManager {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError error) {}
+                    public void onCancelled(DatabaseError error) {
+                    }
                 });
     }
 
@@ -123,11 +140,16 @@ public final class RemoteConfigManager {
                         // Final Ads State
                         boolean finalAdsState = !isPremium && adsEnabled && adsDefault;
 
+                        if (isPremium) {
+                            LocalData.interstitialAd = false;
+                            LocalData.bannerAd = false;
+                        }
                         callback.onConfigReady(finalAdsState);
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError error) {}
+                    public void onCancelled(DatabaseError error) {
+                    }
                 });
     }
 

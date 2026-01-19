@@ -2,6 +2,7 @@ package com.koisk.videokiosk.activity;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -50,10 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String storedMediaType = "BOTH";
 
-    // ✅ Flag: only start kiosk after permission when user pressed Play
     private boolean isPlayRequested = false;
 
-    // ✅ Background executor to avoid ANR
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
@@ -272,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // ✅ Check if user selected "Don't ask again"
     private boolean isPermissionPermanentlyDenied() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             boolean showRationaleImages = shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES);
@@ -336,8 +336,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         RemoteConfigManager.startListening(this, showAds -> {
-            LocalData.interstitialAd = showAds;
-            LocalData.bannerAd = showAds;
             AdManager.loadBanner(MainActivity.this, R.id.adView);
             AdManager.loadInterstitial(MainActivity.this);
         });

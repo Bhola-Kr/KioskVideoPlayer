@@ -81,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
                 int imageDisplayInterval = 15;
                 if (!imageDisplayTime.isEmpty()) {
                     imageDisplayInterval = Integer.parseInt(imageDisplayTime);
+                    if (imageDisplayInterval <= 0) {
+                        Toast.makeText(this, "Interval must be greater than 0", Toast.LENGTH_LONG).show();
+                        hideProgress();
+                        return;
+                    }
                 }
                 LocalData.setImageDisplayInterval(imageDisplayInterval);
                 StorageUtil.readFilesFromFolder(getApplicationContext());

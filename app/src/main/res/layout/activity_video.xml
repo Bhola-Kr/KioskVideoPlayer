@@ -56,11 +56,10 @@
         android:focusableInTouchMode="true"
         android:marqueeRepeatLimit="marquee_forever"
         android:padding="6dp"
-
         android:singleLine="true"
         android:text="Upgrade to Premium to remove this watermark"
         android:textColor="@color/red_color"
-        android:textSize="@dimen/_24sdp"
+        android:textSize="@dimen/_28sdp"
         android:textStyle="bold"
 
         app:layout_constraintEnd_toEndOf="parent"
@@ -88,12 +87,11 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:marqueeRepeatLimit="marquee_forever"
-
         android:padding="8dp"
         android:singleLine="true"
         android:text="Upgrade to Premium  •  Remove this now"
         android:textColor="@color/red_color"
-        android:textSize="@dimen/_24sdp"
+        android:textSize="@dimen/_28sdp"
         android:textStyle="bold"
 
         app:layout_constraintBottom_toBottomOf="parent"

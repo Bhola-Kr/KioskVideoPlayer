@@ -2,9 +2,11 @@ package com.koisk.videokiosk.activity;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -37,12 +39,22 @@ import com.koisk.videokiosk.utils.VideoPlayer;
 public class VideoActivity extends AppCompatActivity {
 
     private VideoView videoView;
-    private ImageView imageView;
-    private VideoPlayer mVideoPlayer;
-    private ImageView exitIcon, removeWatermarkIcon, removeWatermarkIconTop;
+    private ImageView imageView, exitIcon, removeWatermarkIcon, removeWatermarkIconTop;
     private TextView watermarkText, watermarkTextTop;
+
+    private VideoPlayer mVideoPlayer;
     private SpDatabase spDatabase;
-    private boolean orientation, showExitIcon, showControls, statusBar, volume, backButton, recentButton;
+
+    private boolean orientation, showExitIcon, showControls,
+            statusBar, volume, backButton, recentButton;
+
+    // 🔐 Premium & Internet
+    private boolean isPremiumUser = false;
+    private AlertDialog offlineDialog;
+
+    // 🌐 Real-time network
+    private ConnectivityManager connectivityManager;
+    private ConnectivityManager.NetworkCallback networkCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +66,6 @@ public class VideoActivity extends AppCompatActivity {
         videoView = findViewById(R.id.videoView);
         imageView = findViewById(R.id.imageView);
         exitIcon = findViewById(R.id.exitIcon);
-        exitIcon.setOnClickListener(v -> showExitConfirmationDialog());
-
         removeWatermarkIcon = findViewById(R.id.removeWatermarkIcon);
         removeWatermarkIconTop = findViewById(R.id.removeWatermarkIconTop);
         watermarkText = findViewById(R.id.watermarkText);
@@ -64,16 +74,17 @@ public class VideoActivity extends AppCompatActivity {
         watermarkText.setSelected(true);
         watermarkTextTop.setSelected(true);
 
-
-        removeWatermarkIcon.setOnClickListener(view -> showUpgradeDialog());
-        watermarkText.setOnClickListener(view -> showUpgradeDialog());
-        removeWatermarkIconTop.setOnClickListener(view -> showUpgradeDialog());
-        watermarkTextTop.setOnClickListener(view -> showUpgradeDialog());
+        exitIcon.setOnClickListener(v -> showExitConfirmationDialog());
+        removeWatermarkIcon.setOnClickListener(v -> showUpgradeDialog());
+        removeWatermarkIconTop.setOnClickListener(v -> showUpgradeDialog());
+        watermarkText.setOnClickListener(v -> showUpgradeDialog());
+        watermarkTextTop.setOnClickListener(v -> showUpgradeDialog());
 
         videoSetup();
         listenPremiumAndUpdateWatermark();
     }
 
+    // 🔥 PREMIUM STATUS LISTENER
     private void listenPremiumAndUpdateWatermark() {
 
         String deviceId = RemoteConfigManager.getDeviceId(getApplicationContext());
@@ -87,61 +98,109 @@ public class VideoActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                boolean isPremium = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
+                isPremiumUser = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
 
-                if (isPremium) {
+                if (isPremiumUser) {
                     hideWatermarks();
+                    dismissOfflineDialog();
                     LocalData.bannerAd = false;
                     LocalData.interstitialAd = false;
                     AdManager.hideBannerAd(VideoActivity.this, R.id.adView);
-
                 } else {
                     showWatermarks();
                     LocalData.bannerAd = true;
                     LocalData.interstitialAd = true;
                     AdManager.loadBanner(VideoActivity.this, R.id.adView);
+                    checkOfflineRestriction();
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-
-    private void showWatermarks() {
-        if (removeWatermarkIcon != null) removeWatermarkIcon.setVisibility(View.VISIBLE);
-        if (removeWatermarkIconTop != null) removeWatermarkIconTop.setVisibility(View.VISIBLE);
-
-        if (watermarkText != null) watermarkText.setVisibility(View.VISIBLE);
-        if (watermarkTextTop != null) watermarkTextTop.setVisibility(View.VISIBLE);
+    // 🌐 SIMPLE INTERNET CHECK (fallback)
+    private boolean isInternetAvailable() {
+        try {
+            ConnectivityManager cm =
+                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo info = cm.getActiveNetworkInfo();
+            return info != null && info.isConnected();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    private void hideWatermarks() {
-        if (removeWatermarkIcon != null) removeWatermarkIcon.setVisibility(View.GONE);
-        if (removeWatermarkIconTop != null) removeWatermarkIconTop.setVisibility(View.GONE);
-
-        if (watermarkText != null) watermarkText.setVisibility(View.GONE);
-        if (watermarkTextTop != null) watermarkTextTop.setVisibility(View.GONE);
+    // 🚫 OFFLINE RESTRICTION
+    private void checkOfflineRestriction() {
+        if (!isInternetAvailable() && !isPremiumUser) {
+            showOfflineDialog();
+            if (videoView.isPlaying()) videoView.pause();
+        } else {
+            dismissOfflineDialog();
+            if (!videoView.isPlaying()) videoView.start();
+        }
     }
 
+    // 🚨 NON-CANCELABLE DIALOG
+    private void showOfflineDialog() {
+        if (offlineDialog != null && offlineDialog.isShowing()) return;
 
-    private void showUpgradeDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Upgrade to Premium")
+        offlineDialog = new AlertDialog.Builder(this)
+                .setTitle("Offline Access Restricted")
                 .setMessage(
-                        "Upgrade to Premium to remove all watermarks and on-screen text.\n" +
-                                "Enjoy an ad-free experience with no interruptions."
+                        "Offline playback is available only for Premium users.\n\n" +
+                                "Please connect to the internet or upgrade to Premium."
                 )
-                .setPositiveButton("Upgrade", (dialog, which) -> {
-                    startActivity(new Intent(getApplicationContext(), SubscriptionActivity.class));
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                .setCancelable(false)
+                .setPositiveButton("Upgrade",
+                        (d, w) -> startActivity(
+                                new Intent(this, SubscriptionActivity.class)))
+                .create();
+
+        offlineDialog.show();
+    }
+
+    private void dismissOfflineDialog() {
+        if (offlineDialog != null && offlineDialog.isShowing()) {
+            offlineDialog.dismiss();
+            offlineDialog = null;
+        }
+    }
+
+    // 📡 REAL-TIME NETWORK MONITOR
+    private void registerNetworkCallback() {
+
+        connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        networkCallback = new ConnectivityManager.NetworkCallback() {
+
+            @Override
+            public void onAvailable(@NonNull Network network) {
+                runOnUiThread(() -> checkOfflineRestriction());
+            }
+
+            @Override
+            public void onLost(@NonNull Network network) {
+                runOnUiThread(() -> checkOfflineRestriction());
+            }
+        };
+
+        connectivityManager.registerDefaultNetworkCallback(networkCallback);
+    }
+
+    private void unregisterNetworkCallback() {
+        try {
+            if (connectivityManager != null && networkCallback != null) {
+                connectivityManager.unregisterNetworkCallback(networkCallback);
+            }
+        } catch (Exception ignored) {}
     }
 
     private void videoSetup() {
+
         orientation = spDatabase.getBoolean(Constant.KEY_ORIENTATION);
         showControls = spDatabase.getBoolean(Constant.KEY_SHOW_VIDEO_CONTROLS);
         showExitIcon = spDatabase.getBoolean(Constant.KEY_EXIT_VIDEO_CONTROLS);
@@ -153,8 +212,7 @@ public class VideoActivity extends AppCompatActivity {
         exitIcon.setVisibility(showExitIcon ? View.VISIBLE : View.GONE);
 
         setRequestedOrientation(
-                orientation
-                        ? ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                orientation ? ActivityInfo.SCREEN_ORIENTATION_SENSOR
                         : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         );
 
@@ -163,105 +221,96 @@ public class VideoActivity extends AppCompatActivity {
         }
 
         if (statusBar) {
-            windowSetup();
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
         }
 
         mVideoPlayer = new VideoPlayer(this, videoView, imageView);
         mVideoPlayer.videoSetup();
     }
 
-    private void windowSetup() {
-        try {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        } catch (Exception e) {
-            Log.d("error: ", "" + e.getLocalizedMessage());
-        }
+    private void showUpgradeDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Upgrade to Premium")
+                .setMessage("Remove watermarks and unlock offline playback.")
+                .setPositiveButton("Upgrade",
+                        (d, w) -> startActivity(
+                                new Intent(this, SubscriptionActivity.class)))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void hideWatermarks() {
+        removeWatermarkIcon.setVisibility(View.GONE);
+        removeWatermarkIconTop.setVisibility(View.GONE);
+        watermarkText.setVisibility(View.GONE);
+        watermarkTextTop.setVisibility(View.GONE);
+    }
+
+    private void showWatermarks() {
+        removeWatermarkIcon.setVisibility(View.VISIBLE);
+        removeWatermarkIconTop.setVisibility(View.VISIBLE);
+        watermarkText.setVisibility(View.VISIBLE);
+        watermarkTextTop.setVisibility(View.VISIBLE);
     }
 
     private void showExitConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Exit Kiosk");
-        builder.setMessage("Are you sure you want to exit from the kiosk?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish(); // Finish the activity and return to the previous screen
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss(); // Dismiss the dialog
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        new AlertDialog.Builder(this)
+                .setTitle("Exit Kiosk")
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton("Yes", (d, w) -> finish())
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (!videoView.isPlaying()) {
-            videoView.start();
+        registerNetworkCallback();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterNetworkCallback();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (!recentButton) {
+            ActivityManager am =
+                    (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            am.moveTaskToFront(getTaskId(), 0);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (!videoView.isPlaying()) {
-            videoView.start();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (videoView.isPlaying()) {
-            videoView.stopPlayback();
-        }
+        checkOfflineRestriction();
     }
 
     @Override
     public void onBackPressed() {
-        if (backButton) {
-            super.onBackPressed();
-        }
+        if (backButton) super.onBackPressed();
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        boolean result;
-        switch (event.getKeyCode()) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                result = !volume;
-                break;
-            default:
-                result = super.dispatchKeyEvent(event);
-                break;
+        if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP ||
+                event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            return !volume;
         }
-        return result;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mVideoPlayer != null) {
-            mVideoPlayer.stopPlayback();
-        }
-        if (!recentButton) {
-            ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-            activityManager.moveTaskToFront(getTaskId(), 0);
-        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mVideoPlayer != null) {
-            mVideoPlayer.stopPlayback();
-        }
+        if (mVideoPlayer != null) mVideoPlayer.stopPlayback();
     }
 }

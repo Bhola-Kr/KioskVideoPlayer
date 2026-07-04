@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace 'com.koisk.videokiosk'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.koisk.videokiosk"
         minSdk 24
-        targetSdk 35
-        versionCode 10
-        versionName "1.1.0"
+        targetSdk 36
+        versionCode 13
+        versionName "2.0.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

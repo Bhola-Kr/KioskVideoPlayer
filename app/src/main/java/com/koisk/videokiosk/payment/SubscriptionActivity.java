@@ -1,5 +1,6 @@
 package com.koisk.videokiosk.payment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -88,6 +89,10 @@ public class SubscriptionActivity extends AppCompatActivity {
             }
             launchSubscriptionPurchase();
         });
+
+        TextView tvFooter = findViewById(R.id.tvFooterEmail);
+        tvFooter.setOnClickListener(v -> openSupportEmail());
+
     }
 
     // ============================================================
@@ -394,6 +399,36 @@ public class SubscriptionActivity extends AppCompatActivity {
             billingClient.endConnection();
         }
     }
+
+    private void openSupportEmail() {
+
+        String supportEmail = "recentchathelp@gmail.com";
+
+        // Your existing device ID logic
+        String deviceId = RemoteConfigManager.getDeviceId(getApplicationContext());
+
+        String subject = "Dev Support";
+        String body =
+                "Hello Support Team,\n\n" +
+                        "I need help regarding Premium / App usage.\n\n" +
+                        "Device ID:\n" + deviceId + "\n\n" +
+                        "Issue Description:\n" +
+                        "[Please describe your issue here]\n\n" +
+                        "Thank you.";
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(android.net.Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{supportEmail});
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+
+        try {
+            startActivity(Intent.createChooser(intent, "Contact Support"));
+        } catch (Exception e) {
+            // Optional fallback
+        }
+    }
+
 
 
 }

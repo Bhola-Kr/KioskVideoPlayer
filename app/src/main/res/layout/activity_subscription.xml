@@ -152,7 +152,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_10sdp"
-                        android:text="Remove all ads"
+                        android:text="Remove all ads and Watermarks Text"
                         android:textColor="@color/white_color"
                         android:textSize="@dimen/_11sdp" />
                 </LinearLayout>
@@ -174,7 +174,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_10sdp"
-                        android:text="Remove all Watermark Text"
+                        android:text="Offline playback is available"
                         android:textColor="@color/white_color"
                         android:textSize="@dimen/_11sdp" />
                 </LinearLayout>
@@ -196,7 +196,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_10sdp"
-                        android:text="Unlock premium kiosk settings"
+                        android:text="Developer Support for Premium"
                         android:textColor="@color/white_color"
                         android:textSize="@dimen/_11sdp" />
                 </LinearLayout>
@@ -273,17 +273,35 @@
     </ScrollView>
 
     <!-- Footer -->
-    <TextView
-        android:id="@+id/tvFooter"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:autoLink="email"
-        android:padding="8dp"
-        android:text="© 2026 Kiosk App · Help: recentchathelp@gmail.com"
-        android:textAlignment="center"
-        android:textColor="#888888"
-        android:textSize="12sp" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <!-- Normal Text -->
+        <TextView
+            android:id="@+id/tvFooterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="© 2026 Kiosk App · Help:"
+            android:textColor="#888888"
+            android:textSize="12sp" />
+
+        <!-- Email (RED) -->
+        <TextView
+            android:id="@+id/tvFooterEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="recentchathelp@gmail.com"
+            android:textColor="#FF0000"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
 
 </RelativeLayout>

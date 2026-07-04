@@ -156,19 +156,36 @@
         </LinearLayout>
     </ScrollView>
 
-    <TextView
-        android:layout_alignParentBottom="true"
-        android:textAlignment="center"
-        android:id="@+id/tvFooter"
+    <!-- Footer -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="© 2026 Kiosk App · Help: recentchathelp@gmail.com"
-        android:textSize="12sp"
-        android:textColor="#888888"
-        android:autoLink="email"
-        android:padding="8dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:layout_gravity="center_horizontal"/>
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <!-- Normal Text -->
+        <TextView
+            android:id="@+id/tvFooterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="© 2026 Kiosk App · Help:"
+            android:textColor="#888888"
+            android:textSize="12sp" />
+
+        <!-- Email (RED) -->
+        <TextView
+            android:id="@+id/tvFooterEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="recentchathelp@gmail.com"
+            android:textColor="#FF0000"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
 
 

@@ -37,7 +37,7 @@
             android:name=".activity.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.PaymentsActivity"
+            android:name=".activity.PaymentActivity"
             android:exported="false" />
         <activity
             android:name=".activity.SetupActivity"
